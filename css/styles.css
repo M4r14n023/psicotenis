@@ -1,0 +1,142 @@
+:root {
+    /* Paleta Roland Garros */
+    --bg-dark: #121513;        
+    --bg-card: #1B241E;        
+    --header-bg: #014227;      
+    --primary: #C84C09;        /* Naranja/Terracota */
+    --primary-hover: #A53C06;  
+    
+    --text-main: #F4F4F4;      
+    --text-muted: #A3B8AD;     
+    --border: #2A3B32;         
+
+    --green: #10B981;
+    --yellow: #F59E0B;
+    --orange: #F97316;
+    --red: #EF4444;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+
+body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding-bottom: 40px; }
+
+/* HEADER RESPONSIVE */
+header { 
+    background-color: var(--header-bg); 
+    padding: 15px 20px; 
+    border-bottom: 3px solid var(--primary); 
+    position: sticky; 
+    top: 0; 
+    z-index: 100; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 15px; 
+}
+.logo-container { display: flex; align-items: center; gap: 15px; }
+
+/* Logo más grande con su propio fondo blanco */
+.app-logo { 
+    width: 90px; 
+    height: 90px; 
+    object-fit: contain; 
+    border-radius: 12px; 
+    background-color: #FFFFFF; /* Asegura el fondo blanco */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Sombra para que resalte sobre el verde */
+}
+
+header h1 { font-size: 1.6rem; color: #FFFFFF; margin: 0; font-weight: 700; letter-spacing: 0.5px; }
+
+.nav-buttons { 
+    display: flex; 
+    gap: 10px; 
+    flex-wrap: wrap; 
+}
+.nav-buttons button { 
+    background: rgba(255,255,255,0.1); 
+    border: 1px solid rgba(255,255,255,0.3); 
+    color: #FFFFFF; 
+    padding: 8px 14px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    font-size: 0.95rem; 
+    transition: all 0.3s ease; 
+}
+.nav-buttons button:hover { 
+    background: var(--primary); 
+    border-color: var(--primary); 
+    color: white; 
+}
+
+@media (max-width: 600px) {
+    header { flex-direction: column; text-align: center; justify-content: center; }
+    .logo-container { flex-direction: column; }
+    .nav-buttons { width: 100%; justify-content: center; }
+    .nav-buttons button { flex-grow: 1; text-align: center; font-size: 0.85rem; padding: 10px 5px; }
+    header h1 { font-size: 1.4rem; }
+}
+
+/* CONTENEDORES Y TARJETAS */
+.container { max-width: 850px; margin: 0 auto; padding: 20px; }
+
+.card { background-color: var(--bg-card); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 1px solid var(--border); }
+.card h2 { margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 10px; font-size: 1.3rem; color: #FFFFFF; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); }
+.form-control { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background-color: var(--bg-dark); color: var(--text-main); font-size: 1rem; }
+.form-control:focus { outline: none; border-color: var(--primary); }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+
+/* Sliders */
+.slider-container { display: flex; align-items: center; gap: 15px; }
+input[type=range] { flex-grow: 1; -webkit-appearance: none; appearance: none; background: transparent; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: var(--primary); cursor: pointer; margin-top: -8px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: var(--border); border-radius: 3px; }
+.slider-val { background: var(--border); padding: 4px 12px; border-radius: 6px; font-weight: bold; min-width: 60px; text-align: center; color: var(--primary); }
+
+/* Buttons */
+.btn { display: block; width: 100%; padding: 14px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background 0.3s; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn:hover { background-color: var(--primary-hover); }
+.btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.btn-outline:hover { background-color: var(--primary); color: white; }
+.btn-danger { background-color: transparent; border: 1px solid var(--red); color: var(--red); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;}
+.btn-danger:hover { background-color: var(--red); color: white; }
+
+/* Indicators */
+.indicator { background: var(--bg-dark); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+.indicator h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; font-weight: 600;}
+.indicator .val { font-size: 2.3rem; font-weight: bold; margin-bottom: 10px; }
+
+.progress-bar-bg { width: 100%; background-color: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease-in-out; }
+
+.dt-box { padding: 20px; border-radius: 10px; margin-top: 20px; text-align: center; border-left: 5px solid transparent; background: var(--bg-dark); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+.dt-box.green { border-color: var(--green); }
+.dt-box.yellow { border-color: var(--yellow); }
+.dt-box.red { border-color: var(--red); }
+
+.hidden { display: none !important; }
+.muted { color: var(--text-muted); font-size: 0.9rem; }
+
+.chart-container { position: relative; height: 300px; width: 100%; margin-bottom: 30px; }
+
+/* Tabla */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--primary); font-weight: 600; text-transform: uppercase; border-bottom: 2px solid var(--border); }
+
+/* Player Item */
+.player-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--bg-dark); border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border); }
+.player-item strong { color: #FFFFFF; font-size: 1.05rem; }
+
+@media print {
+    body { background: white; color: black; }
+    .no-print { display: none !important; }
+    .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    .indicator { border: 1px solid #eee; }
+}

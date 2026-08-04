@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Seguimiento - Tennis Tracker</title>
+    
+    <link rel="icon" type="image/png" href="public/favicon.png">
+    <link rel="apple-touch-icon" href="public/logo.png">
+    <meta name="theme-color" content="#014227">
+    <link rel="manifest" href="public/manifest.json">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="no-print">
+        <div class="logo-container">
+            <!-- Logo directo sin el div de fondo naranja -->
+            <img src="public/logo.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
+            <h1>Seguimiento</h1>
+        </div>
+        <div class="nav-buttons">
+            <button onclick="app.navigate('setup')">Nueva Sesión</button>
+            <button onclick="app.navigate('players')">Jugadores</button>
+            <button onclick="app.navigate('history')">Historial / Gráficos</button>
+        </div>
+    </header>
+    <div class="container">
+        
+        <!-- VISTA: GESTIÓN DE JUGADORES -->
+        <div id="view-players" class="view hidden">
+            <div class="card">
+                <h2>Registrar Nuevo Jugador/a</h2>
+                <div class="form-group">
+                    <label>Nombre y Apellido</label>
+                    <input type="text" id="newPlayerName" class="form-control" placeholder="Ej. Mateo Gómez">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Edad</label>
+                        <input type="number" id="newPlayerAge" class="form-control" placeholder="15">
+                    </div>
+                    <div class="form-group">
+                        <label>Género</label>
+                        <select id="newPlayerGender" class="form-control">
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" onclick="app.savePlayer()">Guardar Jugador/a</button>
+            </div>
+
+            <div class="card">
+                <h2>Jugadores Registrados</h2>
+                <div id="playersList"></div>
+            </div>
+        </div>
+
+        <!-- VISTA 1: DATOS DEL JUGADOR / INICIO -->
+        <div id="view-setup" class="view">
+            <div class="card">
+                <h2>Iniciar Sesión de Entrenamiento</h2>
+                
+                <div class="form-group">
+                    <label>Seleccionar Jugador Registrado</label>
+                    <select id="selectPlayer" class="form-control" onchange="app.onSelectPlayerChange(this.value)">
+                        <option value="">-- Seleccionar de la lista --</option>
+                    </select>
+                </div>
+
+                <div id="quickPlayerForm" class="hidden">
+                    <p style="color:var(--primary); margin-bottom:10px; font-weight:bold;">O cargar datos de entrenamiento eventual:</p>
+                    <div class="form-group">
+                        <label>Nombre del Jugador/a</label>
+                        <input type="text" id="playerName" class="form-control" placeholder="Ej. Juan Pérez">
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Edad</label>
+                            <input type="number" id="playerAge" class="form-control" placeholder="16">
+                        </div>
+                        <div class="form-group">
+                            <label>Género</label>
+                            <select id="playerGender" class="form-control">
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="app.startPreEval()" style="margin-top:15px;">Comenzar Evaluación PRE</button>
+            </div>
+        </div>
+
+        <!-- VISTA 2: EVALUACIÓN PRE -->
+        <div id="view-pre" class="view hidden">
+            <div class="card">
+                <h2>🧠 Variables Psicológicas (PRE)</h2>
+                <p class="muted">0 = Muy bajo/Muy mal | 100 = Excelente</p>
+                
+                <div class="form-group">
+                    <label>Concentración: ¿Qué tan concentrado te sentís para entrenar hoy?</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-conc" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Motivación: ¿Cuántas ganas tenés de entrenar hoy?</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-mot" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confianza: ¿Qué tanta confianza tenés en tu tenis hoy?</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-conf" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Control Emocional: ¿Qué tan tranquilo y con la cabeza despejada te sentís?</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-ctrl" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💪 Variables Físicas (PRE)</h2>
+                
+                <div class="form-group">
+                    <label>Energía: ¿Cuánta energía sentís que tenés ahora? (100 = Mucha)</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-ener" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Fatiga: ¿Qué tan cansado llegaste hoy? (100 = Muy cansado)</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-fat" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Dolor/Molestia: ¿Tenés alguna molestia física? (100 = Mucho dolor)</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-dol" min="0" max="100" value="0" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">0%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Recuperación: ¿Sentís que tu cuerpo está recuperado para entrenar? (100 = Totalmente recuperado)</label>
+                    <div class="slider-container">
+                        <input type="range" id="pre-rec" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="app.calculatePreSummary()" style="margin-top:20px;">Calcular Estado Inicial 📊</button>
+            </div>
+        </div>
+
+        <!-- VISTA RESUMEN PRE -->
+        <div id="view-pre-summary" class="view hidden">
+            <div class="card">
+                <h2>Estado Inicial del Jugador (PRE)</h2>
+                <p class="muted" style="margin-bottom:20px;">Indicadores de estado antes de comenzar la práctica:</p>
+                
+                <div class="grid-3">
+                    <div class="indicator">
+                        <h3>🧠 Estado Psicológico Inicial</h3>
+                        <div class="val" id="summary-pre-psi">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-summary-psi"></div></div>
+                    </div>
+                    <div class="indicator">
+                        <h3>💪 Estado Físico Inicial</h3>
+                        <div class="val" id="summary-pre-fis">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-summary-fis"></div></div>
+                    </div>
+                    <div class="indicator" style="border-color: var(--primary);">
+                        <h3 style="color: var(--primary);">🎾 Índice General Inicial</h3>
+                        <div class="val" id="summary-pre-gral">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-summary-gral"></div></div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="app.startTraining()" style="margin-top: 25px;">Iniciar Entrenamiento 🚀</button>
+            </div>
+        </div>
+
+        <!-- VISTA ENTRENAMIENTO ACTIVO -->
+        <div id="view-training" class="view hidden text-center" style="text-align: center; padding: 50px 0;">
+            <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;">Entrenamiento en curso...</h2>
+            <p class="muted" style="margin-bottom: 40px;">Presionar el botón al finalizar la sesión.</p>
+            <button class="btn" style="max-width: 300px; margin: 0 auto; background-color: var(--primary);" onclick="app.startPostEval()">Finalizar Entrenamiento 🛑</button>
+        </div>
+
+        <!-- VISTA EVALUACIÓN POST -->
+        <div id="view-post" class="view hidden">
+            <div class="card">
+                <h2>🧠 Variables Psicológicas (POST)</h2>
+                <p class="muted" style="margin-bottom:15px;">Evaluá cómo te sentís AHORA al terminar el entrenamiento.</p>
+                
+                <div class="form-group">
+                    <label>Concentración Final</label>
+                    <div class="slider-container">
+                        <input type="range" id="post-conc" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Motivación Final</label>
+                    <div class="slider-container">
+                        <input type="range" id="post-mot" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confianza Final</label>
+                    <div class="slider-container">
+                        <input type="range" id="post-conf" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Control Emocional Final</label>
+                    <div class="slider-container">
+                        <input type="range" id="post-ctrl" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value + '%'">
+                        <div class="slider-val">50%</div>
+                    </div>
+                </div>
+                
+                <hr style="border-color: var(--border); margin: 20px 0;">
+                
+                <div class="form-group">
+                    <label>RPE (Esfuerzo Percibido)</label>
+                    <div class="slider-container">
+                        <input type="range" id="post-rpe" min="0" max="10" value="5" oninput="this.nextElementSibling.innerText = this.value">
+                        <div class="slider-val">5</div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="app.calculateResults()" style="margin-top:20px;">Ver Resultados y Guardar</button>
+            </div>
+        </div>
+
+        <!-- VISTA RESULTADOS -->
+        <div id="view-results" class="view hidden">
+            <div class="no-print" style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+                <button class="btn btn-outline" onclick="app.navigate('setup')">Nueva Sesión</button>
+            </div>
+
+            <div class="card" id="print-area">
+                <h2 style="display:flex; justify-content:space-between;">
+                    <span>Reporte de Sesión</span>
+                    <span id="res-date" style="color:var(--text-muted); font-size:1rem;"></span>
+                </h2>
+                <p><strong>Jugador:</strong> <span id="res-name"></span> (<span id="res-age"></span> años, <span id="res-gender"></span>)</p>
+                
+                <h3 style="margin: 25px 0 15px 0; color: var(--primary);">1. Estado Inicial (PRE)</h3>
+                <div class="grid-3">
+                    <div class="indicator">
+                        <h3>🧠 Estado Psicológico Inicial</h3>
+                        <div class="val" id="res-pre-psi">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-pre-psi"></div></div>
+                    </div>
+                    <div class="indicator">
+                        <h3>💪 Estado Físico Inicial</h3>
+                        <div class="val" id="res-pre-fis">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-pre-fis"></div></div>
+                    </div>
+                    <div class="indicator" style="border-color: var(--primary);">
+                        <h3 style="color: var(--primary);">🎾 Índice General Inicial</h3>
+                        <div class="val" id="res-pre-gral">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-pre-gral"></div></div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: var(--primary);">2. Impacto del Entrenamiento</h3>
+                <div class="grid-3">
+                    <div class="indicator">
+                        <h3>🧠 Estado Psicológico Final</h3>
+                        <div class="val" id="res-post-psi">0%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-post-psi"></div></div>
+                    </div>
+                    <div class="indicator" style="border-color: #F4F4F4;">
+                        <h3 style="color: #F4F4F4;">📈 Cambio Psicológico</h3>
+                        <div class="val" id="res-diff-total" style="font-size: 2rem;">0%</div>
+                        <div id="res-diff-text" style="font-weight:bold; margin-top:5px;"></div>
+                    </div>
+                    <div class="indicator">
+                        <h3>Esfuerzo (RPE)</h3>
+                        <div class="val" id="res-rpe">0/10</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-dark); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border);">
+                    <h4 style="margin-bottom: 10px; color: var(--text-muted);">Desglose Psicológico:</h4>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Concentración:</span> <strong id="res-diff-conc"></strong></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Motivación:</span> <strong id="res-diff-mot"></strong></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Confianza:</span> <strong id="res-diff-conf"></strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Control Emocional:</span> <strong id="res-diff-ctrl"></strong></div>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: var(--primary);">3. Predicción vs Resultado (DT)</h3>
+                <div id="dt-container" class="dt-box">
+                    <div style="display:flex; justify-content:space-around; margin-bottom: 15px;">
+                        <div>
+                            <p class="muted" style="font-size:0.9rem;">Predicción Inicial (PPI)</p>
+                            <h4 id="dt-ppi" style="font-size:1.5rem;">0%</h4>
+                        </div>
+                        <div>
+                            <p class="muted" style="font-size:0.9rem;">Resultado Final (RPF)</p>
+                            <h4 id="dt-rpf" style="font-size:1.5rem;">0%</h4>
+                        </div>
+                        <div>
+                            <p class="muted" style="font-size:0.9rem;">Diferencia (DT)</p>
+                            <h4 id="dt-val" style="font-size:1.5rem;">0%</h4>
+                        </div>
+                    </div>
+                    <p id="dt-message" style="font-weight:bold; font-size:1.1rem;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA HISTORIAL Y GRÁFICOS -->
+        <div id="view-history" class="view hidden">
+            <div class="card no-print">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>📈 Historial de Jugadores</h2>
+                    <button class="btn btn-outline" style="width: auto; padding: 8px 15px;" onclick="app.exportCSV()">Exportar CSV</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Filtrar por Jugador:</label>
+                    <select id="filterPlayer" class="form-control" onchange="app.renderHistory()">
+                        <option value="ALL">Todos los jugadores</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="charts-container" class="hidden">
+                <div class="card">
+                    <h2>Evolución del Índice General Inicial</h2>
+                    <div class="chart-container"><canvas id="chartGeneral"></canvas></div>
+                </div>
+                <div class="card">
+                    <h2>Estado Psicológico vs Físico (PRE)</h2>
+                    <div class="chart-container"><canvas id="chartPrePsyFis"></canvas></div>
+                </div>
+                <div class="card">
+                    <h2>Evolución Variables Psicológicas</h2>
+                    <div class="chart-container"><canvas id="chartPsyVars"></canvas></div>
+                </div>
+                <div class="card">
+                    <h2>Impacto del Entrenamiento (DT %)</h2>
+                    <div class="chart-container"><canvas id="chartPsyChange"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Registros de Sesiones</h2>
+                <div style="overflow-x: auto;">
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Jugador</th>
+                                <th>Índice PRE</th>
+                                <th>Psi PRE</th>
+                                <th>Psi POST</th>
+                                <th>Cambio (DT)</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Carga de Scripts JS -->
+    <script src="js/storage.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
