@@ -41,16 +41,16 @@ header {
     gap: 15px; 
 }
 
-/* MARCO Y LOGO CORREGIDOS */
+/* MARCO Y LOGO CORREGIDOS (Mantiene proporción y llena el recuadro) */
 .app-logo { 
-    width: 80px; 
-    height: 80px; 
-    /* fill estira la imagen hasta los bordes del cuadro blanco */
-    object-fit: fill; 
+    width: 75px; 
+    height: 75px; 
+    object-fit: cover; /* Agranda la imagen manteniendo la proporción y rellena todo el cuadro */
+    object-position: center; /* Centra la ilustración */
     border-radius: 12px; 
     background-color: #FFFFFF;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    flex-shrink: 0; /* Impide que el celular comprima o corte el logo */
+    flex-shrink: 0; /* Evita que el celular comprima el logo */
 }
 
 header h1 { 
@@ -86,27 +86,29 @@ header h1 {
     color: white; 
 }
 
-/* MEDIA QUERY PARA CELULARES (Ajuste visual limpio) */
+/* MEDIA QUERY PARA CELULARES */
 @media (max-width: 600px) {
     header { 
         padding: 10px 15px;
     }
     .logo-container { 
-        flex-direction: row; /* Mantiene logo y título al lado */
-        justify-content: center;
-        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
     }
     .app-logo { 
-        width: 60px; /* Tamaño adaptado para mobile */
-        height: 60px; 
+        width: 55px; /* Tamaño optimizado para mobile */
+        height: 55px; 
     }
     header h1 { 
-        font-size: 1.4rem; 
-        display: block !important; /* Asegura que el título sea visible siempre */
+        font-size: 1.3rem; 
+        display: block !important; /* Mantiene el título visible siempre */
     }
     .nav-buttons { 
         width: 100%; 
-        justify-content: center; 
+        justify-content: space-between; 
     }
     .nav-buttons button { 
         flex: 1; 
