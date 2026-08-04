@@ -102,6 +102,7 @@ header h1 {
     header { 
         padding: 10px 12px;
     }
+
     .logo-container { 
         display: flex;
         flex-direction: row;
@@ -109,18 +110,35 @@ header h1 {
         justify-content: flex-start;
         gap: 10px;
     }
+
+    /* Marco cuadrado fijo para mobile */
     .logo-wrapper { 
-        width: 50px; /* Tamaño adaptado para mobile */
-        height: 50px; 
+        width: 48px !important; 
+        height: 48px !important; 
+        min-width: 48px !important;
+        min-height: 48px !important;
+        border-radius: 10px;
+        aspect-ratio: 1 / 1; /* Fuerza a mantener siempre la forma cuadrada sin estirar */
     }
+
+    /* Imagen ajustada proporcionalmente */
+    .app-logo {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        transform: scale(1.35) !important;
+    }
+
     header h1 { 
         font-size: 1.25rem; 
-        display: block !important; /* Mantiene el título siempre visible */
+        display: block !important; /* Mantiene visible "Seguimiento" */
     }
+
     .nav-buttons { 
         width: 100%; 
         justify-content: space-between; 
     }
+
     .nav-buttons button { 
         flex: 1; 
         text-align: center; 
