@@ -23,7 +23,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1
 /* HEADER RESPONSIVE */
 header { 
     background-color: var(--header-bg); 
-    padding: 15px 20px; 
+    padding: 12px 20px; 
     border-bottom: 3px solid var(--primary); 
     position: sticky; 
     top: 0; 
@@ -34,26 +34,40 @@ header {
     flex-wrap: wrap; 
     gap: 15px; 
 }
-.logo-container { display: flex; align-items: center; gap: 15px; }
 
-/* Logo más grande con su propio fondo blanco */
-.app-logo { 
-    width: 90px; 
-    height: 90px; 
-    object-fit: contain;
-    transform: scale(2); /* Agranda la imagen dentro de su contenedor */ 
-    border-radius: 12px; 
-    background-color: #FFFFFF; /* Asegura el fondo blanco */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Sombra para que resalte sobre el verde */
+.logo-container { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
 }
 
-header h1 { font-size: 1.6rem; color: #FFFFFF; margin: 0; font-weight: 700; letter-spacing: 0.5px; }
+/* MARCO Y LOGO CORREGIDOS */
+.app-logo { 
+    width: 80px; 
+    height: 80px; 
+    /* fill estira la imagen hasta los bordes del cuadro blanco */
+    object-fit: fill; 
+    border-radius: 12px; 
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    flex-shrink: 0; /* Impide que el celular comprima o corte el logo */
+}
+
+header h1 { 
+    font-size: 1.6rem; 
+    color: #FFFFFF; 
+    margin: 0; 
+    font-weight: 700; 
+    letter-spacing: 0.5px; 
+    white-space: nowrap;
+}
 
 .nav-buttons { 
     display: flex; 
-    gap: 10px; 
+    gap: 8px; 
     flex-wrap: wrap; 
 }
+
 .nav-buttons button { 
     background: rgba(255,255,255,0.1); 
     border: 1px solid rgba(255,255,255,0.3); 
@@ -65,18 +79,41 @@ header h1 { font-size: 1.6rem; color: #FFFFFF; margin: 0; font-weight: 700; lett
     font-size: 0.95rem; 
     transition: all 0.3s ease; 
 }
+
 .nav-buttons button:hover { 
     background: var(--primary); 
     border-color: var(--primary); 
     color: white; 
 }
 
+/* MEDIA QUERY PARA CELULARES (Ajuste visual limpio) */
 @media (max-width: 600px) {
-    header { flex-direction: column; text-align: center; justify-content: center; }
-    .logo-container { flex-direction: column; }
-    .nav-buttons { width: 100%; justify-content: center; }
-    .nav-buttons button { flex-grow: 1; text-align: center; font-size: 0.85rem; padding: 10px 5px; }
-    header h1 { font-size: 1.4rem; }
+    header { 
+        padding: 10px 15px;
+    }
+    .logo-container { 
+        flex-direction: row; /* Mantiene logo y título al lado */
+        justify-content: center;
+        width: 100%;
+    }
+    .app-logo { 
+        width: 60px; /* Tamaño adaptado para mobile */
+        height: 60px; 
+    }
+    header h1 { 
+        font-size: 1.4rem; 
+        display: block !important; /* Asegura que el título sea visible siempre */
+    }
+    .nav-buttons { 
+        width: 100%; 
+        justify-content: center; 
+    }
+    .nav-buttons button { 
+        flex: 1; 
+        text-align: center; 
+        font-size: 0.8rem; 
+        padding: 8px 4px; 
+    }
 }
 
 /* CONTENEDORES Y TARJETAS */
