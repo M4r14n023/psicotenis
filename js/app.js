@@ -18,6 +18,66 @@ const app = {
         }
     },
 
+    // --- MODALES PERSONALIZADOS ---
+    showAlert(message, title = 'Notificación') {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            
+            const btnConfirm = document.getElementById('modalBtnConfirm');
+            const btnCancel = document.getElementById('modalBtnCancel');
+            
+            btnCancel.classList.add('hidden');
+            btnConfirm.innerText = 'Aceptar';
+
+            const handleConfirm = () => {
+                btnConfirm.removeEventListener('click', handleConfirm);
+                modal.classList.add('hidden');
+                resolve(true);
+            };
+
+            btnConfirm.addEventListener('click', handleConfirm);
+            modal.classList.remove('hidden');
+        });
+    },
+
+    showConfirm(message, title = 'Confirmación') {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            
+            const btnConfirm = document.getElementById('modalBtnConfirm');
+            const btnCancel = document.getElementById('modalBtnCancel');
+            
+            btnCancel.classList.remove('hidden');
+            btnCancel.innerText = 'Cancelar';
+            btnConfirm.innerText = 'Aceptar';
+
+            const handleConfirm = () => {
+                cleanup();
+                modal.classList.add('hidden');
+                resolve(true);
+            };
+
+            const handleCancel = () => {
+                cleanup();
+                modal.classList.add('hidden');
+                resolve(false);
+            };
+
+            const cleanup = () => {
+                btnConfirm.removeEventListener('click', handleConfirm);
+                btnCancel.removeEventListener('click', handleCancel);
+            };
+
+            btnConfirm.addEventListener('click', handleConfirm);
+            btnCancel.addEventListener('click', handleCancel);
+            modal.classList.remove('hidden');
+        });
+    },
+
     getColor(val) {
         if(val >= 80) return 'var(--green)';
         if(val >= 60) return 'var(--yellow)';
@@ -32,12 +92,15 @@ const app = {
     },
 
     // --- GESTIÓN DE JUGADORES ---
-    savePlayer() {
+    async savePlayer() {
         const name = document.getElementById('newPlayerName').value.trim();
         const age = document.getElementById('newPlayerAge').value;
         const gender = document.getElementById('newPlayerGender').value;
 
-        if(!name || !age) return alert('Por favor ingresá Nombre y Edad.');
+        if(!name || !age) {
+            await this.showAlert('Por favor ingresá Nombre y Edad.', 'Atención');
+            return;
+        }
 
         storage.savePlayer({ id: Date.now(), name, age, gender });
         document.getElementById('newPlayerName').value = '';
@@ -45,11 +108,12 @@ const app = {
 
         this.renderPlayersList();
         this.updatePlayerSelects();
-        alert('Jugador registrado con éxito.');
+        await this.showAlert('Jugador registrado con éxito.', '¡Éxito!');
     },
 
-    deletePlayer(id) {
-        if(confirm('¿Seguro que querés eliminar a este jugador/a?')) {
+    async deletePlayer(id) {
+        const confirmed = await this.showConfirm('¿Seguro que querés eliminar a este jugador/a?', 'Eliminar Jugador');
+        if(confirmed) {
             storage.deletePlayer(id);
             this.renderPlayersList();
             this.updatePlayerSelects();
@@ -82,7 +146,6 @@ const app = {
         
         document.getElementById('selectPlayer').innerHTML = options;
         
-        // Filtro del historial
         const sessions = storage.getSessions();
         const uniqueNames = [...new Set(sessions.map(s => s.name))];
         document.getElementById('filterPlayer').innerHTML = '<option value="ALL">Todos los jugadores</option>' +
@@ -99,7 +162,7 @@ const app = {
     },
 
     // --- FLUJO DE EVALUACIÓN ---
-    startPreEval() {
+    async startPreEval() {
         const selectedId = document.getElementById('selectPlayer').value;
         let name, age, gender;
 
@@ -112,7 +175,10 @@ const app = {
             name = document.getElementById('playerName').value.trim();
             age = document.getElementById('playerAge').value;
             gender = document.getElementById('playerGender').value;
-            if(!name || !age) return alert('Por favor ingresá Nombre y Edad.');
+            if(!name || !age) {
+                await this.showAlert('Por favor ingresá Nombre y Edad.', 'Atención');
+                return;
+            }
         }
 
         this.currentSession = {
@@ -270,8 +336,9 @@ const app = {
     },
 
     // --- HISTORIAL Y BORRADO DE SESIONES ---
-    deleteSession(sessionId) {
-        if(confirm('¿Seguro que querés eliminar este registro de entrenamiento?')) {
+    async deleteSession(sessionId) {
+        const confirmed = await this.showConfirm('¿Seguro que querés eliminar este registro de entrenamiento?', 'Eliminar Sesión');
+        if(confirmed) {
             storage.deleteSession(sessionId);
             this.renderHistory();
         }
@@ -304,15 +371,17 @@ const app = {
             tbody.appendChild(tr);
         });
 
-        // Llamada al módulo externo de gráficos
         if(sessions.length > 0) {
             trackerCharts.renderAll(sessions);
         }
     },
 
-    exportCSV() {
+    async exportCSV() {
         const sessions = storage.getSessions();
-        if(sessions.length === 0) return alert('No hay datos para exportar.');
+        if(sessions.length === 0) {
+            await this.showAlert('No hay datos para exportar.', 'Atención');
+            return;
+        }
         
         let csv = 'Fecha,Hora,Nombre,Edad,Genero,Indice General PRE,Psicologico PRE,Fisico PRE,Psicologico POST,Cambio Psicologico Total (DT),RPE\n';
         
